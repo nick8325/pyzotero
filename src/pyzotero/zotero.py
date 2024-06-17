@@ -69,7 +69,7 @@ def build_url(base_url, path, args_dict=None):
     leading / trailing slashes etc"""
     # Returns a list in the structure of urlparse.ParseResult"""
     url_parts = list(urlparse(base_url))
-    url_parts[2] = path
+    url_parts[2] += path
     if args_dict:
         url_parts[4] = urlencode(args_dict)
     return urlunparse(url_parts)
@@ -288,9 +288,17 @@ class Zotero:
         api_key=None,
         preserve_json_order=False,
         locale="en-US",
+        localhost=False,
     ):
         """Store Zotero credentials"""
-        self.endpoint = "https://api.zotero.org"
+
+        if localhost:
+            self.endpoint = "http://localhost:23119/api"
+            library_id = "0"
+            library_type = "user"
+        else:
+            self.endpoint = "https://api.zotero.org"
+
         if library_id and library_type:
             self.library_id = library_id
             # library_type determines whether query begins w. /users or /groups
